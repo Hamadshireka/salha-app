@@ -111,25 +111,32 @@ textarea.input{resize:none;line-height:1.75;}
         <div style="font-size:12px;color:rgba(255,255,255,.55);margin-top:3px;line-height:1.6;">صوّر + اكتب المشكلة<br>وخلّ الورش تتنافس على حلّها</div>
       </div>
     </button>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:16px;">
-      <button onclick="showScreen('add')" style="background:var(--white);border:1px solid var(--border);border-radius:14px;padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;font-family:'Cairo',sans-serif;box-shadow:0 1px 6px rgba(0,0,0,.05);">
-        <span style="font-size:22px;">📍</span><span style="font-size:11px;font-weight:700;color:#555;">الموقع</span>
-      </button>
-      <button onclick="showScreen('add')" style="background:var(--white);border:1px solid var(--border);border-radius:14px;padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;font-family:'Cairo',sans-serif;box-shadow:0 1px 6px rgba(0,0,0,.05);">
-        <span style="font-size:22px;">🖼️</span><span style="font-size:11px;font-weight:700;color:#555;">صور</span>
-      </button>
-      <button onclick="showScreen('add')" style="background:var(--white);border:1px solid var(--border);border-radius:14px;padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;font-family:'Cairo',sans-serif;box-shadow:0 1px 6px rgba(0,0,0,.05);">
-        <span style="font-size:22px;">🚗</span><span style="font-size:11px;font-weight:700;color:#555;">السيارة</span>
-      </button>
-      <button onclick="showScreen('add')" style="background:var(--white);border:1px solid var(--border);border-radius:14px;padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;font-family:'Cairo',sans-serif;box-shadow:0 1px 6px rgba(0,0,0,.05);">
-        <span style="font-size:22px;">🎥</span><span style="font-size:11px;font-weight:700;color:#555;">فيديو</span>
-      </button>
+
+    <!-- Search Bar -->
+    <div style="position:relative;margin-bottom:12px;">
+      <input id="search-input" type="text" placeholder="ابحث — ياباني، أمريكي، كامري..." oninput="filterPosts()"
+        style="width:100%;padding:12px 44px 12px 16px;border:2px solid var(--border);border-radius:14px;font-family:'Cairo',sans-serif;font-size:14px;outline:none;background:var(--white);color:var(--navy);"
+        onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--border)'"/>
+      <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px;pointer-events:none;">🔍</span>
     </div>
+
+    <!-- Filter Chips -->
+    <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;scrollbar-width:none;">
+      <button class="fchip" onclick="setFilter(this,'الكل')" style="padding:7px 16px;border-radius:20px;border:none;background:var(--navy);color:#fff;font-family:'Cairo',sans-serif;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;">الكل</button>
+      <button class="fchip" onclick="setFilter(this,'ياباني')" style="padding:7px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);color:#555;font-family:'Cairo',sans-serif;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;">🇯🇵 ياباني</button>
+      <button class="fchip" onclick="setFilter(this,'أمريكي')" style="padding:7px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);color:#555;font-family:'Cairo',sans-serif;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;">🇺🇸 أمريكي</button>
+      <button class="fchip" onclick="setFilter(this,'كوري')" style="padding:7px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);color:#555;font-family:'Cairo',sans-serif;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;">🇰🇷 كوري</button>
+      <button class="fchip" onclick="setFilter(this,'ألماني')" style="padding:7px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);color:#555;font-family:'Cairo',sans-serif;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;">🇩🇪 ألماني</button>
+      <button class="fchip" onclick="setFilter(this,'صيني')" style="padding:7px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);color:#555;font-family:'Cairo',sans-serif;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;">🇨🇳 صيني</button>
+      <button class="fchip" onclick="setFilter(this,'كهربائي')" style="padding:7px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);color:#555;font-family:'Cairo',sans-serif;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;">⚡ كهربائي</button>
+      <button class="fchip" onclick="setFilter(this,'هايبرد')" style="padding:7px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);color:#555;font-family:'Cairo',sans-serif;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;">🔋 هايبرد</button>
+    </div>
+
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
       <div style="font-weight:800;font-size:16px;">آخر الأعطال المنشورة</div>
       <button style="background:transparent;border:none;color:var(--orange);font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">عرض الكل</button>
     </div>
-    <div class="card fu" onclick="showScreen('offers')" style="margin-bottom:12px;display:flex;align-items:stretch;">
+    <div class="card fu post-card" data-type="ياباني" data-text="كامري حولي تهتز الوقوف" onclick="openPostDetail('visitor')" style="margin-bottom:12px;display:flex;align-items:stretch;">
       <div style="width:88px;background:var(--navy);display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0;border-radius:0 18px 18px 0;">
         <span style="font-size:30px;">🎥</span>
         <div style="position:absolute;bottom:6px;left:6px;background:rgba(0,0,0,.6);border-radius:5px;padding:2px 6px;font-size:10px;color:#fff;">0:25</div>
@@ -146,7 +153,7 @@ textarea.input{resize:none;line-height:1.75;}
         </div>
       </div>
     </div>
-    <div class="card fu" onclick="showScreen('offers')" style="margin-bottom:12px;display:flex;align-items:stretch;animation-delay:.08s;">
+    <div class="card fu post-card" data-type="ياباني" data-text="باترول فروانية دخان شكمان" onclick="openPostDetail('visitor')" style="margin-bottom:12px;display:flex;align-items:stretch;animation-delay:.08s;">
       <div style="width:88px;background:#0d1b4b;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0;border-radius:0 18px 18px 0;">
         <span style="font-size:30px;">🎥</span>
         <div style="position:absolute;bottom:6px;left:6px;background:rgba(0,0,0,.6);border-radius:5px;padding:2px 6px;font-size:10px;color:#fff;">0:18</div>
@@ -163,7 +170,7 @@ textarea.input{resize:none;line-height:1.75;}
         </div>
       </div>
     </div>
-    <div class="card fu" onclick="showScreen('offers')" style="margin-bottom:12px;display:flex;align-items:stretch;animation-delay:.16s;">
+    <div class="card fu post-card" data-type="كوري" data-text="النترا جهراء لمبة مكينة" onclick="openPostDetail('owner')" style="margin-bottom:12px;display:flex;align-items:stretch;animation-delay:.16s;">
       <div style="width:88px;background:#162040;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0;border-radius:0 18px 18px 0;">
         <span style="font-size:30px;">🎥</span>
         <div style="position:absolute;bottom:6px;left:6px;background:rgba(0,0,0,.6);border-radius:5px;padding:2px 6px;font-size:10px;color:#fff;">0:14</div>
@@ -234,9 +241,10 @@ textarea.input{resize:none;line-height:1.75;}
       <img id="img-prev" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:18px;"/>
       <div id="media-ph"><span style="font-size:36px;">🎥</span><div style="color:#fff;font-weight:700;font-size:13px;margin-top:6px;">اضغط لإضافة صورة أو فيديو</div></div>
     </div>
-    <input type="file" id="media-inp" accept="image/*,video/*" capture="environment" style="display:none;" onchange="previewMedia(this)"/>
+    <input type="file" id="media-inp" accept="image/*,video/*" style="display:none;" onchange="previewMedia(this)"/>
+    <input type="file" id="media-camera" accept="image/*,video/*" capture="environment" style="display:none;" onchange="previewMedia(this)"/>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
-      <button onclick="document.getElementById('media-inp').click()" style="background:var(--white);border:2px solid var(--border);border-radius:14px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;font-family:'Cairo',sans-serif;"><span style="font-size:22px;">📷</span><span style="font-size:11px;font-weight:700;color:#555;">تصوير</span></button>
+      <button onclick="document.getElementById('media-camera').click()" style="background:var(--white);border:2px solid var(--border);border-radius:14px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;font-family:'Cairo',sans-serif;"><span style="font-size:22px;">📷</span><span style="font-size:11px;font-weight:700;color:#555;">تصوير</span></button>
       <button onclick="document.getElementById('media-inp').click()" style="background:var(--white);border:2px solid var(--border);border-radius:14px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;font-family:'Cairo',sans-serif;"><span style="font-size:22px;">🖼️</span><span style="font-size:11px;font-weight:700;color:#555;">من المعرض</span></button>
     </div>
     <div onclick="toggleUrgency()" style="background:var(--white);border-radius:14px;border:1px solid var(--border);padding:13px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;cursor:pointer;">
@@ -445,6 +453,120 @@ textarea.input{resize:none;line-height:1.75;}
   </div>
 </div>
 
+
+<!-- ════════════════════════════════
+     POST DETAIL
+════════════════════════════════ -->
+<div id="post-detail" class="screen">
+  <div class="topbar">
+    <button class="icon-btn" onclick="showScreen('home')">←</button>
+    <div style="font-weight:800;font-size:17px;">تفاصيل العطل</div>
+    <button class="icon-btn" onclick="sharePost()">↑</button>
+  </div>
+  <div class="scroll" style="padding-bottom:30px;">
+
+    <!-- Media -->
+    <div style="background:var(--navy);position:relative;height:220px;display:flex;align-items:center;justify-content:center;cursor:pointer;" onclick="playVideo()">
+      <div style="text-align:center;">
+        <div style="font-size:56px;margin-bottom:8px;">🎥</div>
+        <div style="background:rgba(255,255,255,.9);border-radius:50%;width:56px;height:56px;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:24px;box-shadow:0 4px 16px rgba(0,0,0,.3);">▶️</div>
+      </div>
+      <div style="position:absolute;bottom:12px;left:12px;background:rgba(0,0,0,.65);border-radius:6px;padding:3px 8px;font-size:11px;color:#fff;">0:20</div>
+      <div style="position:absolute;top:12px;right:12px;background:rgba(249,115,22,.9);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:800;color:#fff;">🚨 عاجل</div>
+    </div>
+
+    <!-- Post Info -->
+    <div style="padding:16px;">
+
+      <!-- User row -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+        <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--navy),#2d4a9e);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:16px;flex-shrink:0;">م</div>
+        <div style="flex:1;">
+          <div style="font-weight:800;font-size:14px;">محمد العنزي</div>
+          <div style="font-size:11px;color:#999;">منذ 3 دقائق · 📍 حولي</div>
+        </div>
+        <div style="background:#fff8f0;border-radius:20px;padding:5px 12px;display:flex;align-items:center;gap:5px;">
+          <span style="color:var(--orange);font-size:13px;">⭐</span>
+          <span style="font-weight:800;font-size:13px;color:var(--orange);" id="detail-offers-count">8 عروض</span>
+        </div>
+      </div>
+
+      <!-- Problem desc -->
+      <div style="background:var(--white);border-radius:16px;padding:14px;border:1px solid var(--border);margin-bottom:14px;">
+        <div style="font-weight:800;font-size:13px;color:#aaa;margin-bottom:8px;">📝 وصف المشكلة</div>
+        <div style="font-size:14px;color:#333;line-height:1.8;">السيارة تطفي أثناء القيادة خصوصاً عند الوقوف على الإشارة وبعدها تشتغل على طول.</div>
+      </div>
+
+      <!-- Car info -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+        <span style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:6px 12px;font-size:12px;font-weight:700;color:var(--navy);">🚗 تويوتا كامري 2016</span>
+        <span style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:6px 12px;font-size:12px;font-weight:700;color:var(--navy);">🇯🇵 ياباني</span>
+        <span style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:6px 12px;font-size:12px;font-weight:700;color:var(--navy);">📍 حولي</span>
+      </div>
+
+      <!-- ═══ OWNER VIEW: Shows offers ═══ -->
+      <div id="owner-view" style="display:none;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <div style="width:3px;height:20px;background:var(--orange);border-radius:2px;"></div>
+          <div style="font-weight:800;font-size:15px;">العروض اللي وصلتك</div>
+        </div>
+
+        <div style="background:var(--white);border-radius:16px;margin-bottom:10px;border:1px solid var(--border);overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.04);">
+          <div style="background:var(--orange);padding:4px 14px;font-size:11px;font-weight:800;color:#fff;">مميز</div>
+          <div style="padding:14px;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+              <div style="width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,var(--navy),#2d4a9e);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:10px;flex-shrink:0;text-align:center;line-height:1.3;">كراج<br>الغانم</div>
+              <div style="flex:1;"><div style="font-weight:800;font-size:14px;">كراج الغانم</div><div style="font-size:11px;color:#888;">⭐ 4.9 (328) · ✅ ضمان 3 شهور · ⏱ 2-3 ساعات</div></div>
+              <div style="text-align:center;"><div style="font-weight:900;font-size:20px;color:var(--navy);">65</div><div style="font-size:10px;color:#aaa;">د.ك</div></div>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button onclick="window.location.href='tel:+96500000000'" style="flex:1;background:var(--navy);border:none;border-radius:10px;padding:10px;color:#fff;font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">📞 اتصال</button>
+              <button onclick="window.open('https://wa.me/96500000000')" style="flex:1;background:#f0f7ff;border:1px solid #d0e4ff;border-radius:10px;padding:10px;color:var(--navy);font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">💬 واتساب</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:var(--white);border-radius:16px;margin-bottom:10px;border:1px solid var(--border);padding:14px;box-shadow:0 2px 10px rgba(0,0,0,.04);">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <div style="width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,#1a3a6b,#2a5a9e);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:10px;flex-shrink:0;text-align:center;line-height:1.3;">كراج<br>النخبة</div>
+            <div style="flex:1;"><div style="font-weight:800;font-size:14px;">كراج النخبة</div><div style="font-size:11px;color:#888;">⭐ 4.6 (189) · ✅ ضمان شهرين · ⏱ 3-4 ساعات</div></div>
+            <div style="text-align:center;"><div style="font-weight:900;font-size:20px;color:var(--navy);">55</div><div style="font-size:10px;color:#aaa;">د.ك</div></div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button onclick="window.location.href='tel:+96500000000'" style="flex:1;background:var(--navy);border:none;border-radius:10px;padding:10px;color:#fff;font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">📞 اتصال</button>
+            <button onclick="window.open('https://wa.me/96500000000')" style="flex:1;background:#f0f7ff;border:1px solid #d0e4ff;border-radius:10px;padding:10px;color:var(--navy);font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">💬 واتساب</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ GARAGE VIEW: Can reply ═══ -->
+      <div id="garage-view" style="display:none;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <div style="width:3px;height:20px;background:var(--orange);border-radius:2px;"></div>
+          <div style="font-weight:800;font-size:15px;">رد على هذا العطل</div>
+        </div>
+        <div style="background:var(--white);border-radius:16px;border:1px solid var(--border);padding:16px;margin-bottom:12px;">
+          <input id="garage-price" class="input" placeholder="السعر التقديري (د.ك)" type="number" style="margin-bottom:10px;"/>
+          <textarea id="garage-note" class="input" rows="3" placeholder="ملاحظات إضافية... مثال: نحتاج نفحصها أول لتحديد السعر النهائي"></textarea>
+          <button onclick="submitGarageOffer()" class="btn-orange" style="margin-top:12px;">أرسل عرضك 🚀</button>
+        </div>
+      </div>
+
+      <!-- ═══ VISITOR VIEW: Locked ═══ -->
+      <div id="visitor-view">
+        <div style="background:linear-gradient(135deg,#f8f9ff,#eef0ff);border:1px solid #d8dcff;border-radius:16px;padding:20px;text-align:center;">
+          <div style="font-size:36px;margin-bottom:10px;">🔒</div>
+          <div style="font-weight:800;font-size:15px;color:var(--navy);margin-bottom:6px;">عندك كراج؟</div>
+          <div style="font-size:13px;color:#666;line-height:1.7;margin-bottom:16px;">سجّل كراجك واشترك عشان تشوف<br>بيانات العميل وترد على عطله</div>
+          <button onclick="showScreen('garage-reg')" class="btn-navy" style="margin-bottom:10px;">سجّل كراجك الحين 🏪</button>
+          <button onclick="showModal('login')" style="width:100%;padding:12px;border:1.5px solid var(--border);border-radius:14px;background:transparent;color:#666;font-family:'Cairo',sans-serif;font-weight:700;font-size:14px;cursor:pointer;">عندي حساب — سجّل دخول</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <!-- ════════════════════════════════
      MODALS
 ════════════════════════════════ -->
@@ -483,6 +605,47 @@ textarea.input{resize:none;line-height:1.75;}
 </div><!-- end app -->
 
 <script>
+
+
+// Post Detail
+let currentUserRole = 'visitor'; // visitor | owner | garage
+function openPostDetail(role){
+  currentUserRole = role;
+  document.getElementById('owner-view').style.display   = role==='owner'   ? 'block' : 'none';
+  document.getElementById('garage-view').style.display  = role==='garage'  ? 'block' : 'none';
+  document.getElementById('visitor-view').style.display = role==='visitor' ? 'block' : 'none';
+  showScreen('post-detail');
+}
+function playVideo(){ alert('▶️ تشغيل الفيديو'); }
+function sharePost(){
+  if(navigator.share) navigator.share({title:'عطل سيارة على صلّحها',url:window.location.href});
+  else alert('رابط العطل: ' + window.location.href);
+}
+function submitGarageOffer(){
+  const price = document.getElementById('garage-price').value;
+  if(!price){ document.getElementById('garage-price').style.borderColor='#e63946'; return; }
+  document.getElementById('garage-view').innerHTML = '<div style="text-align:center;padding:20px 0;"><div style="font-size:48px;margin-bottom:10px;">✅</div><div style="font-weight:800;font-size:18px;color:var(--navy);">تم إرسال عرضك!</div><div style="font-size:13px;color:#888;margin-top:8px;">العميل راح يشوف عرضك ويتواصل معاك</div></div>';
+}
+
+// Search & Filter
+let activeFilter='الكل';
+function setFilter(btn,type){
+  activeFilter=type;
+  document.querySelectorAll('.fchip').forEach(b=>{b.style.background='var(--white)';b.style.color='#555';b.style.border='1.5px solid var(--border)';});
+  btn.style.background='var(--navy)';btn.style.color='#fff';btn.style.border='none';
+  filterPosts();
+}
+function filterPosts(){
+  const q=((document.getElementById('search-input')||{}).value||'').trim().toLowerCase();
+  document.querySelectorAll('.post-card').forEach(card=>{
+    const text=(card.dataset.text||'').toLowerCase();
+    const type=card.dataset.type||'';
+    const matchFilter=activeFilter==='الكل'||type===activeFilter;
+    const matchSearch=!q||text.includes(q);
+    card.style.display=(matchFilter&&matchSearch)?'flex':'none';
+  });
+}
+
 const MODELS={ياباني:['كامري','لاند كروزر','باجيرو','أكورد','سيفيك','هايلكس'],أمريكي:['تاهو','سوبربان','F-150','ماليبو','إكسبلورر','كمارو'],كوري:['سوناتا','توسان','سبورتاج','النترا','سانتافي','K5'],صيني:['حافي','شيري','BYD','جيتور','فاو'],كهربائي:['تيسلا','BYD أتو','أيونيك','نيسان ليف','BMW i4'],هايبرد:['كامري هايبرد','راف4 هايبرد','أكورد هايبرد','لكزس ES']};
 let selType='',urgency=false,regArea='';
 
