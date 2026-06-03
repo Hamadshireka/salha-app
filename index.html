@@ -49,6 +49,67 @@ textarea.input{resize:none;line-height:1.75;}
 .toggle-thumb{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--white);box-shadow:0 1px 4px rgba(0,0,0,.2);transition:left .2s;}
 .toggle-track.on .toggle-thumb{left:23px;}
 </style>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://yfiqnidhpzmzonilfuze.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_QHEW3cyD8AcbIjfuIuuBww_Cht5mrYQ';
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ── Load Posts ──────────────────────────────
+async function loadPosts() {
+  const { data, error } = await db.from('posts').select('*').order('created_at', { ascending: false });
+  if (error) { console.error(error); return; }
+  const feed = document.getElementById('posts-feed');
+  if (!data || data.length === 0) {
+    feed.innerHTML = '<div style="text-align:center;padding:40px 20px;color:#aaa;font-size:14px;">لا يوجد أعطال منشورة بعد 🚗</div>';
+    return;
+  }
+  feed.innerHTML = data.map((p, i) => `
+    <div class="card fu post-card" data-type="${p.car_type||''}" data-text="${(p.description||'').toLowerCase()} ${(p.car_model||'').toLowerCase()}"
+      onclick="openPostDetail('visitor')"
+      style="margin-bottom:12px;display:flex;align-items:stretch;animation-delay:${i*0.08}s;">
+      <div style="width:88px;background:var(--navy);display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0;border-radius:0 18px 18px 0;">
+        <span style="font-size:30px;">🚗</span>
+        ${p.urgent ? '<div style="position:absolute;top:6px;right:6px;background:var(--orange);border-radius:4px;padding:1px 5px;font-size:9px;color:#fff;font-weight:800;">عاجل</div>' : ''}
+      </div>
+      <div style="flex:1;padding:13px 14px;">
+        <div style="font-weight:800;font-size:14px;margin-bottom:4px;line-height:1.4;">${p.description ? p.description.slice(0,50)+'...' : 'عطل سيارة'}</div>
+        <div style="font-size:11px;color:#999;margin-bottom:9px;">🚗 ${p.car_model||p.car_type||'غير محدد'} · 📍 ${p.area||'الكويت'}</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div style="background:#fff8f0;border-radius:8px;padding:4px 10px;display:flex;align-items:center;gap:5px;">
+            <span style="color:var(--orange);font-size:13px;">⭐</span>
+            <span style="font-weight:800;font-size:13px;color:var(--orange);">جديد</span>
+          </div>
+          <span style="font-size:11px;color:#bbb;">${new Date(p.created_at).toLocaleDateString('ar-KW')}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── Save Post ───────────────────────────────
+async function savePost(postData) {
+  const { data, error } = await db.from('posts').insert([postData]).select();
+  if (error) { alert('خطأ في النشر: ' + error.message); return null; }
+  return data[0];
+}
+
+// ── Save Garage ─────────────────────────────
+async function saveGarage(garageData) {
+  const { data, error } = await db.from('garages').insert([garageData]).select();
+  if (error) { alert('خطأ في التسجيل: ' + error.message); return null; }
+  return data[0];
+}
+
+// ── Save Offer ──────────────────────────────
+async function saveOffer(offerData) {
+  const { data, error } = await db.from('offers').insert([offerData]).select();
+  if (error) { alert('خطأ في إرسال العرض: ' + error.message); return null; }
+  return data[0];
+}
+</script>
 </head>
 <body>
 <div id="app">
@@ -132,11 +193,11 @@ textarea.input{resize:none;line-height:1.75;}
       <button class="fchip" onclick="setFilter(this,'هايبرد')" style="padding:7px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);color:#555;font-family:'Cairo',sans-serif;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;">🔋 هايبرد</button>
     </div>
 
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+    <div id="posts-feed-wrap"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
       <div style="font-weight:800;font-size:16px;">آخر الأعطال المنشورة</div>
       <button style="background:transparent;border:none;color:var(--orange);font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">عرض الكل</button>
     </div>
-    <div class="card fu post-card" data-type="ياباني" data-text="كامري حولي تهتز الوقوف" onclick="openPostDetail('visitor')" style="margin-bottom:12px;display:flex;align-items:stretch;">
+    <div id="posts-feed"><div class="card fu post-card" data-type="ياباني" data-text="كامري حولي تهتز الوقوف" onclick="openPostDetail('visitor')" style="margin-bottom:12px;display:flex;align-items:stretch;">
       <div style="width:88px;background:var(--navy);display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0;border-radius:0 18px 18px 0;">
         <span style="font-size:30px;">🎥</span>
         <div style="position:absolute;bottom:6px;left:6px;background:rgba(0,0,0,.6);border-radius:5px;padding:2px 6px;font-size:10px;color:#fff;">0:25</div>
@@ -188,6 +249,7 @@ textarea.input{resize:none;line-height:1.75;}
       </div>
     </div>
   </div>
+  </div></div></div>
   <nav class="bottomnav">
     <button class="nav-item active" onclick="setNav(this)"><span class="nav-icon">🏠</span><span class="nav-label">الرئيسية</span><div class="nav-dot"></div></button>
     <button class="nav-item" onclick="setNav(this)"><span class="nav-icon">📋</span><span class="nav-label">أعطالي</span></button>
@@ -650,7 +712,7 @@ const MODELS={ياباني:['كامري','لاند كروزر','باجيرو','�
 let selType='',urgency=false,regArea='';
 
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
-function goHome(){showScreen('home');}
+function goHome(){showScreen('home');loadPosts();}
 function setNav(btn,screen){document.querySelectorAll('.nav-item').forEach(b=>{b.classList.remove('active');b.querySelector('.nav-dot')&&b.querySelector('.nav-dot').remove();});btn.classList.add('active');const d=document.createElement('div');d.className='nav-dot';btn.appendChild(d);if(screen)showScreen(screen);}
 function showModal(id){document.getElementById(id+'-modal').classList.add('show');}
 function closeModal(id){document.getElementById(id).classList.remove('show');}
@@ -668,7 +730,26 @@ function onDescChange(){document.getElementById('desc-count').textContent=docume
 function checkPost(){const ready=selType&&document.getElementById('prob-desc').value.trim().length>5;document.getElementById('post-btn').disabled=!ready;}
 function toggleUrgency(){urgency=!urgency;document.getElementById('urgency-t').classList.toggle('on',urgency);}
 function previewMedia(inp){if(!inp.files||!inp.files[0])return;const f=inp.files[0];if(f.type.startsWith('image/')){const r=new FileReader();r.onload=e=>{const i=document.getElementById('img-prev');i.src=e.target.result;i.style.display='block';document.getElementById('media-ph').style.display='none';};r.readAsDataURL(f);}else{document.getElementById('media-ph').innerHTML='<span style="font-size:36px;">🎬</span><div style="color:#fff;font-weight:700;font-size:13px;margin-top:6px;">تم اختيار الفيديو ✅</div>';}}
-function submitPost(){const desc=document.getElementById('prob-desc').value;const car=document.getElementById('car-input').value||selType;document.getElementById('post-summary').innerHTML=`<div style="margin-bottom:8px;"><span style="background:#e8edf8;border-radius:8px;padding:3px 10px;font-size:12px;font-weight:800;">🚗 ${selType}</span>${urgency?'&nbsp;<span style="background:#fff0e8;border-radius:8px;padding:3px 10px;font-size:12px;font-weight:800;color:var(--orange);">🚨 عاجل</span>':''}</div><div style="font-weight:700;font-size:14px;margin-bottom:4px;">${car}</div><div style="font-size:13px;color:#555;line-height:1.7;">${desc}</div>`;document.getElementById('post-modal').classList.add('show');}
+async function submitPost(){
+  const desc = document.getElementById('prob-desc').value;
+  const car  = document.getElementById('car-input').value || selType;
+  const btn  = document.getElementById('post-btn');
+  btn.textContent = 'جاري النشر...'; btn.disabled = true;
+  const result = await savePost({
+    car_type: selType, car_model: car,
+    description: desc, urgent: urgency, area: 'الكويت'
+  });
+  btn.textContent = 'انشر العطل 🚀'; btn.disabled = false;
+  document.getElementById('post-summary').innerHTML = `
+    <div style="margin-bottom:8px;">
+      <span style="background:#e8edf8;border-radius:8px;padding:3px 10px;font-size:12px;font-weight:800;">🚗 ${selType}</span>
+      ${urgency?'&nbsp;<span style="background:#fff0e8;border-radius:8px;padding:3px 10px;font-size:12px;font-weight:800;color:var(--orange);">🚨 عاجل</span>':''}
+    </div>
+    <div style="font-weight:700;font-size:14px;margin-bottom:4px;">${car}</div>
+    <div style="font-size:13px;color:#555;line-height:1.7;">${desc}</div>`;
+  document.getElementById('post-modal').classList.add('show');
+  loadPosts();
+}
 
 // Offers tabs
 function setOTab(btn){document.querySelectorAll('#offers button').forEach(b=>{if(b.onclick&&b.onclick.toString().includes('setOTab')){b.style.borderBottomColor='transparent';b.style.color='#999';b.style.fontWeight='600';}});btn.style.borderBottomColor='var(--orange)';btn.style.color='var(--orange)';btn.style.fontWeight='800';}
@@ -680,7 +761,16 @@ function toggleSpec(btn){btn.style.background=btn.style.background==='var(--oran
 function checkReg2(){const hasArea=regArea!=='';const btn=document.getElementById('reg-next2');btn.disabled=!hasArea;}
 function regStep(n){[1,2,3].forEach(i=>{document.getElementById('reg-step'+i).style.display=i===n?'block':'none';document.getElementById('pb'+i).style.background=i<=n?'var(--orange)':'rgba(255,255,255,.2)';});document.getElementById('reg-scroll').scrollTop=0;}
 function previewRegPhoto(inp){if(!inp.files||!inp.files[0])return;document.getElementById('reg-ph-icon').textContent='✅';document.getElementById('reg-ph-title').textContent='تم اختيار الصورة';document.getElementById('reg-ph-sub').textContent='اضغط لتغييرها';document.getElementById('reg-submit').disabled=false;}
-function submitReg(){[1,2,3].forEach(i=>document.getElementById('reg-step'+i).style.display='none');document.getElementById('reg-done').style.display='block';}
+async function submitReg(){
+  const name  = document.getElementById('reg-name').value;
+  const phone = document.getElementById('reg-phone').value;
+  const btn   = document.getElementById('reg-submit');
+  btn.textContent = 'جاري التسجيل...'; btn.disabled = true;
+  await saveGarage({ name, phone: '+965'+phone, area: regArea, subscribed: false });
+  btn.textContent = 'سجّل كراجك مجاناً 🚀'; btn.disabled = false;
+  [1,2,3].forEach(i=>document.getElementById('reg-step'+i).style.display='none');
+  document.getElementById('reg-done').style.display='block';
+}
 
 // Login Modal
 function checkLoginPhone(){const v=document.getElementById('login-phone').value;const btn=document.getElementById('otp-send-btn');btn.disabled=v.length!==8;btn.style.background=v.length===8?'var(--navy)':'#ddd';}
