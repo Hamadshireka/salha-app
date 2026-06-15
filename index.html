@@ -50,6 +50,68 @@ textarea.input{resize:none;line-height:1.75;}
 .toggle-track.on .toggle-thumb{left:23px;}
 </style>
 
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyC2BYwXMnCJCSeB-p89dgqnkanJiqpQHNk",
+  authDomain: "salha-app.firebaseapp.com",
+  projectId: "salha-app",
+  storageBucket: "salha-app.firebasestorage.app",
+  messagingSenderId: "556247115744",
+  appId: "1:556247115744:web:27cb5e9a0dbb0b8e046d85"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+let confirmationResult = null;
+let recaptchaVerifier = null;
+
+function initRecaptcha() {
+  if (!recaptchaVerifier) {
+    recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+      size: 'invisible',
+      callback: () => {}
+    });
+  }
+}
+
+async function sendOTP() {
+  const phone = document.getElementById('login-phone').value;
+  if (phone.length !== 8) return;
+  const btn = document.getElementById('otp-send-btn');
+  btn.textContent = 'جاري الإرسال...';
+  btn.disabled = true;
+  try {
+    initRecaptcha();
+    confirmationResult = await auth.signInWithPhoneNumber('+965' + phone, recaptchaVerifier);
+    document.getElementById('otp-send-btn').style.display = 'none';
+    document.getElementById('otp-area').style.display = 'block';
+  } catch(e) {
+    alert('خطأ: ' + e.message);
+    btn.textContent = 'إرسال رمز التحقق';
+    btn.disabled = false;
+  }
+}
+
+async function verifyOTP() {
+  const code = document.getElementById('otp-code').value;
+  const btn = document.getElementById('otp-verify-btn');
+  btn.textContent = 'جاري التحقق...';
+  btn.disabled = true;
+  try {
+    await confirmationResult.confirm(code);
+    closeModal('login-modal');
+    showScreen('garage-profile');
+  } catch(e) {
+    alert('رمز خاطئ، حاول مرة ثانية');
+    btn.textContent = 'تحقق وأظهر الرقم ✅';
+    btn.disabled = false;
+  }
+}
+</script>
+
 <!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -351,8 +413,8 @@ async function saveOffer(offerData) {
           <div style="text-align:center;flex-shrink:0;"><div style="font-weight:900;font-size:22px;color:var(--navy);">65</div><div style="font-size:10px;color:#aaa;">د.ك</div></div>
         </div>
         <div style="display:flex;gap:8px;">
-          <button onclick="showModal('login')" style="flex:1;background:#f0f7ff;border:1px solid #d0e4ff;border-radius:10px;padding:10px;color:var(--navy);font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">💬 واتساب</button>
-          <button onclick="showModal('login')" style="flex:1;background:var(--navy);border:none;border-radius:10px;padding:10px;color:#fff;font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">📞 اتصال</button>
+          <button onclick="event.stopPropagation();showModal('login')" style="flex:1;background:#f0f7ff;border:1px solid #d0e4ff;border-radius:10px;padding:10px;color:var(--navy);font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">💬 واتساب</button>
+          <button onclick="event.stopPropagation();showModal('login')" style="flex:1;background:var(--navy);border:none;border-radius:10px;padding:10px;color:#fff;font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">📞 اتصال</button>
         </div>
       </div>
     </div>
@@ -364,8 +426,8 @@ async function saveOffer(offerData) {
           <div style="text-align:center;flex-shrink:0;"><div style="font-weight:900;font-size:22px;color:var(--navy);">55</div><div style="font-size:10px;color:#aaa;">د.ك</div></div>
         </div>
         <div style="display:flex;gap:8px;">
-          <button onclick="showModal('login')" style="flex:1;background:#f0f7ff;border:1px solid #d0e4ff;border-radius:10px;padding:10px;color:var(--navy);font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">💬 واتساب</button>
-          <button onclick="showModal('login')" style="flex:1;background:var(--navy);border:none;border-radius:10px;padding:10px;color:#fff;font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">📞 اتصال</button>
+          <button onclick="event.stopPropagation();showModal('login')" style="flex:1;background:#f0f7ff;border:1px solid #d0e4ff;border-radius:10px;padding:10px;color:var(--navy);font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">💬 واتساب</button>
+          <button onclick="event.stopPropagation();showModal('login')" style="flex:1;background:var(--navy);border:none;border-radius:10px;padding:10px;color:#fff;font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">📞 اتصال</button>
         </div>
       </div>
     </div>
@@ -377,8 +439,8 @@ async function saveOffer(offerData) {
           <div style="text-align:center;flex-shrink:0;"><div style="font-weight:900;font-size:22px;color:var(--navy);">75</div><div style="font-size:10px;color:#aaa;">د.ك</div></div>
         </div>
         <div style="display:flex;gap:8px;">
-          <button onclick="showModal('login')" style="flex:1;background:#f0f7ff;border:1px solid #d0e4ff;border-radius:10px;padding:10px;color:var(--navy);font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">💬 واتساب</button>
-          <button onclick="showModal('login')" style="flex:1;background:var(--navy);border:none;border-radius:10px;padding:10px;color:#fff;font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">📞 اتصال</button>
+          <button onclick="event.stopPropagation();showModal('login')" style="flex:1;background:#f0f7ff;border:1px solid #d0e4ff;border-radius:10px;padding:10px;color:var(--navy);font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">💬 واتساب</button>
+          <button onclick="event.stopPropagation();showModal('login')" style="flex:1;background:var(--navy);border:none;border-radius:10px;padding:10px;color:#fff;font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">📞 اتصال</button>
         </div>
       </div>
     </div>
@@ -429,7 +491,7 @@ async function saveOffer(offerData) {
       <div style="font-size:11px;color:#aaa;margin-top:5px;">🚗 تويوتا كامري 2019</div>
     </div>
     <div style="padding:16px;">
-      <button onclick="showModal('login')" class="btn-navy" style="margin-bottom:10px;">🔓 سجّل دخولك للتواصل</button>
+      <button onclick="event.stopPropagation();showModal('login')" class="btn-navy" style="margin-bottom:10px;">🔓 سجّل دخولك للتواصل</button>
     </div>
   </div>
 </div>
@@ -582,8 +644,8 @@ async function saveOffer(offerData) {
               <div style="text-align:center;"><div style="font-weight:900;font-size:20px;color:var(--navy);">65</div><div style="font-size:10px;color:#aaa;">د.ك</div></div>
             </div>
             <div style="display:flex;gap:8px;">
-              <button onclick="window.location.href='tel:+96500000000'" style="flex:1;background:var(--navy);border:none;border-radius:10px;padding:10px;color:#fff;font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">📞 اتصال</button>
-              <button onclick="window.open('https://wa.me/96500000000')" style="flex:1;background:#f0f7ff;border:1px solid #d0e4ff;border-radius:10px;padding:10px;color:var(--navy);font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">💬 واتساب</button>
+              <button onclick="window.location.href='tel:+96500000000';event.stopPropagation();" style="flex:1;background:var(--navy);border:none;border-radius:10px;padding:10px;color:#fff;font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">📞 اتصال</button>
+              <button onclick="window.open('https://wa.me/96500000000');event.stopPropagation();" style="flex:1;background:#f0f7ff;border:1px solid #d0e4ff;border-radius:10px;padding:10px;color:var(--navy);font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">💬 واتساب</button>
             </div>
           </div>
         </div>
@@ -595,8 +657,8 @@ async function saveOffer(offerData) {
             <div style="text-align:center;"><div style="font-weight:900;font-size:20px;color:var(--navy);">55</div><div style="font-size:10px;color:#aaa;">د.ك</div></div>
           </div>
           <div style="display:flex;gap:8px;">
-            <button onclick="window.location.href='tel:+96500000000'" style="flex:1;background:var(--navy);border:none;border-radius:10px;padding:10px;color:#fff;font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">📞 اتصال</button>
-            <button onclick="window.open('https://wa.me/96500000000')" style="flex:1;background:#f0f7ff;border:1px solid #d0e4ff;border-radius:10px;padding:10px;color:var(--navy);font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">💬 واتساب</button>
+            <button onclick="window.location.href='tel:+96500000000';event.stopPropagation();" style="flex:1;background:var(--navy);border:none;border-radius:10px;padding:10px;color:#fff;font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">📞 اتصال</button>
+            <button onclick="window.open('https://wa.me/96500000000');event.stopPropagation();" style="flex:1;background:#f0f7ff;border:1px solid #d0e4ff;border-radius:10px;padding:10px;color:var(--navy);font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">💬 واتساب</button>
           </div>
         </div>
       </div>
@@ -778,5 +840,6 @@ function sendOTP(){document.getElementById('otp-send-btn').style.display='none';
 function checkOTP(){const v=document.getElementById('otp-code').value;const btn=document.getElementById('otp-verify-btn');btn.disabled=v.length!==6;}
 function verifyOTP(){closeModal('login-modal');showScreen('garage-profile');}
 </script>
+<div id="recaptcha-container"></div>
 </body>
 </html>
